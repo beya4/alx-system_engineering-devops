@@ -9,8 +9,7 @@ if __name__ == "__main__":
     url_todo = 'https://jsonplaceholder.typicode.com/todos'
     url_user = 'https://jsonplaceholder.typicode.com/users'
     payload1 = {'userId': empId}
-    payload2 = {'id': empId}
-    
+    payload2 = {'id': empId} 
     req_todo = requests.get(url_todo, params=payload1)
     req_user = requests.get(url_user, params=payload2)
 
