@@ -1,33 +1,31 @@
 #!/usr/bin/python3
-"""
-Using https://jsonplaceholder.typicode.com
-returns info about employee TODO progress
-Implemented using recursion
-"""
-import re
+""" Program that Gather data from an API """
 import requests
-import sys
+from sys import argv
 
+if __name__ == "__main__":
+    """ Program Entry point """
+    empId = argv[1]
+    url_todo = 'https://jsonplaceholder.typicode.com/todos'
+    url_user = 'https://jsonplaceholder.typicode.com/users'
+    payload1 = {'userId': empId}
+    payload2 = {'id': empId}
+    
+    req_todo = requests.get(url_todo, params=payload1)
+    req_user = requests.get(url_user, params=payload2)
 
-API = "https://jsonplaceholder.typicode.com"
-"""REST API url"""
+    # Getting the NUMBER_OF_DONE_TASKS and total tasks
+    total_tasks = req_todo.json()
+    done_tasks = []
+    for task in total_tasks:
+        if (task.get('completed') is True):
+            done_tasks.append(task)
 
+    # Employee name from users
+    user_data = req_user.json()
+    emp_name = user_data[0].get('name')
 
-if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        if re.fullmatch(r'\d+', sys.argv[1]):
-            id = int(sys.argv[1])
-            user_res = requests.get('{}/users/{}'.format(API, id)).json()
-            todos_res = requests.get('{}/todos'.format(API)).json()
-            user_name = user_res.get('name')
-            todos = list(filter(lambda x: x.get('userId') == id, todos_res))
-            todos_done = list(filter(lambda x: x.get('completed'), todos))
-            print(
-                'Employee {} is done with tasks({}/{}):'.format(
-                    user_name,
-                    len(todos_done),
-                    len(todos)
-                )
-            )
-            for todo_done in todos_done:
-                print('\t {}'.format(todo_done.get('title')))
+    print("Employee {:s} is done with tasks({:d}/{:d}):".format(
+        emp_name, len(done_tasks), len(total_tasks)))
+    for task in done_tasks:
+        print("\t {}".format(task.get('title')))
